@@ -10,15 +10,24 @@ Basically builds the application, runs unit tests and creates a docker image whe
 
 - Git
 - CMake
+- gtest
 - C++ compiler
 - Docker
 
 ## Usage
 
-- building the application
+- build
 
     # detect compiler and generate build environment
     cmake .
 
     # build the application
     cmake --build .
+
+- docker
+
+    # build the image
+    docker build -t cpp-cicd-poc .
+
+    # run the image
+    docker run -it --rm --name cpp-cicd-poc cpp-cicd-poc
