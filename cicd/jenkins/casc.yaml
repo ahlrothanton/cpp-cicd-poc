@@ -1,0 +1,14 @@
+unclassified:
+  location:
+    url: http://localhost:8080/
+
+jobs:
+  - script: |
+      multibranchPipelineJob('seed-job') {
+          branchSources {
+              git {
+                  id = 'cpp-cicd-poc'
+                  remote('https://github.com/ahlrothanton/cpp-cicd-poc.git')
+              }
+          }
+      }

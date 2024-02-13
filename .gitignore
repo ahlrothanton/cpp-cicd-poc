@@ -414,3 +414,7 @@ FodyWeavers.xsd
 *.vcxproj.filters
 build/
 *.sln
+
+# custom
+TODO.md
+*.cmake

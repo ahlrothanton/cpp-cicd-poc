@@ -1,0 +1,22 @@
+def repo = 'https://github.com/ahlrothanton/cpp-cicd-poc.git'
+def branch = 'main'
+
+node {
+
+    stage("checkout"){
+        git branch: branch, url: repo
+    }
+
+    stage("build"){
+        echo "implement me"
+    }
+
+    stage("test"){
+        echo "implement me"
+    }
+
+    stage("release"){
+        echo "implement me"
+    }
+
+}

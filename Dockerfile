@@ -1,11 +1,15 @@
 ### base image
-FROM debian:buster AS base
+FROM ubuntu AS base
 
 RUN apt-get update && apt-get install -yq libzmq5
+
+# TODO: clear apt cache
 
 ### builder image
 FROM base AS builder
 
+ARG COVERAGE=true
+ARG CMAKE_BUILD_TYPE=Debug
 ARG CPPZMQ_VERSION=4.10.0
 RUN apt-get install -yq g++ curl cmake libzmq3-dev &&  \
     mkdir -p /usr/src && \
@@ -22,14 +26,19 @@ WORKDIR /usr/src/print_time
 COPY src/ ./src
 COPY tests/ ./tests
 COPY CMakeLists.txt .
+COPY cmake/ ./cmake
 
-RUN cmake . && \
+RUN cmake -S . -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCOVERAGE=${COVERAGE} . && \
     make && \
     make all
+
+# TODO: conditionally run unit tests/coverage
 
 ### app image
 FROM base AS runtime
 
-COPY --from=builder /usr/src/print_time/PrintTime /usr/local/bin/pt
+# copy all possible print_time binaries
+COPY --from=builder /usr/src/print_time/print_time* /usr/local/bin/
 
-ENTRYPOINT ["pt"]
+#CMD tail -f /dev/null
+ENTRYPOINT ["print_time"]

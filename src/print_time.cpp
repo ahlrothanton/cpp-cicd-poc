@@ -2,6 +2,8 @@
 #include <ctime>
 #include <string>
 #include <iomanip>
+#include "print_time.h"
+
 
 // Function to print the current time
 void printCurrentTime(const std::string& format) {
@@ -17,17 +19,6 @@ void printCurrentTime(const std::string& format) {
     std::cout << "Current Time: " << buffer << std::endl;
 }
 
-int main(int argc, char *argv[]) {
-    // Default format
-    std::string format = "%c";
-    
-    // Check if a format argument is provided
-    if (argc > 1) {
-        format = argv[1];
-    }
-    
-    // Call the function to print the current time
-    printCurrentTime(format);
-    
-    return 0;
+void notTested() {
+    std::cout << "I'm not tested" << std::endl;
 }
