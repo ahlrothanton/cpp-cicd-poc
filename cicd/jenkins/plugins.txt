@@ -8,3 +8,4 @@ multiple-scms:latest
 htmlpublisher:latest
 pipeline-stage-view:latest
 cloudbees-folder:latest
+junit:latest
