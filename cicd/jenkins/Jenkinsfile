@@ -68,31 +68,24 @@ pipeline {
                             dockerImage.push("latest")
                         }
                     } catch (Exception e) {
-                        echo 'Unable to push image to DockerHub - did you remember to create the "dockerhub" credential?\n\n    Exception occurred: ' + e.toString()
+                        error 'Unable to push image to DockerHub - did you remember to create the "dockerhub" credential?\n\n    Exception occurred: ' + e.toString() + '\n'
                     }
                 }
             }
-        }
-
-        stage("cleanup") {
-            // cleanup docker images
-            steps {
-                script {
-                    try {
-                        sh """
-                            docker rmi $imagename:$BUILD_NUMBER
-                            docker rmi $imagename:latest
-                        """
-                    } catch (Exception e) {
-                        echo 'Unable to cleanup container images - maybe deleted already?\n    ' + e.toString()
-                    }
-                }
-            } 
         }
     }
 
     post {
         always {
+            // cleanup docker images
+            script {
+                try {
+                    sh "docker rmi -f $imagename"
+                } catch (Exception e) {
+                    echo 'Unable to cleanup container images - maybe deleted already?\n    ' + e.toString()
+                }
+            }
+
             // archive the html files and publish them under reports
             archiveArtifacts artifacts: 'build/coverage.final'
             archiveArtifacts artifacts: 'changelog.txt'
