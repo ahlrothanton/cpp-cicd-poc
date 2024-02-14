@@ -3,15 +3,25 @@
 #include <string>
 #include <iomanip>
 #include <iostream>
+#include <regex>
 
-const std::string format = "%c";
 
+std::string prefix = "Current Time: ";
+
+// test print time with default format
 TEST(PrintTimeTest, DefaultFormat) {
-    printCurrentTime(format);
-    std::cout << "Implement me!" << std::endl;
+    testing::internal::CaptureStdout();
+    printCurrentTime("%c");
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_TRUE(output.find(prefix) == 0);
+    std::cout << output << std::endl;
 }
 
+// test print time with custom format
 TEST(PrintTimeTest, CustomFormat) {
-    printCurrentTime(format);
-    std::cout << "Implement me!" << std::endl;
+    testing::internal::CaptureStdout();
+    printCurrentTime("%u");
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_TRUE(output.find(prefix) == 0);
+    std::cout << output << std::endl;
 }
