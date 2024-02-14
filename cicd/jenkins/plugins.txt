@@ -1,6 +1,10 @@
 git:latest
 docker-build-publish:latest
+docker-workflow:latest
 workflow-aggregator:latest
 configuration-as-code:latest
 job-dsl:latest
 multiple-scms:latest
+htmlpublisher:latest
+pipeline-stage-view:latest
+cloudbees-folder:latest

@@ -1,22 +1,92 @@
 def repo = 'https://github.com/ahlrothanton/cpp-cicd-poc.git'
 def branch = 'main'
 
-node {
-
-    stage("checkout"){
-        git branch: branch, url: repo
+pipeline {
+    environment {
+        imagename = "ahlrothanton/cpp-cicd-poc"
+        dockerImage = ''
     }
 
-    stage("build"){
-        echo "implement me"
+    agent any
+
+    stages {
+
+        stage("checkout"){
+            steps {
+                git branch: branch, url: repo
+            }
+        }
+
+        stage("build"){
+            steps {
+                sh """
+                    cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+                    cmake --build build
+                """
+            }
+        }
+
+        stage("test"){
+            steps {
+                sh """
+                    # test
+                    cd build
+                    ctest .
+                    
+                    # coverage
+                    lcov -c -d . -o coverage.info
+                    lcov --remove coverage.info -o coverage.final '/usr/include/*' '*.h'
+                    
+                    # generate coverate report as html
+                    genhtml coverage.final --output-directory html
+                """
+            }
+        }
+
+        stage("build-image") {
+            steps {
+                script {
+                    dockerImage = docker.build imagename
+                }
+            }
+        }
+        stage("publish-image") {
+            steps {
+                script {
+                    docker.withRegistry( "", dockerhub ) {
+                       dockerImage.push("$BUILD_NUMBER")
+                        dockerImage.push("latest")
+                    }
+                }
+            }
+        }
+
+        stage("cleanup") {
+            // cleanup docker images
+            steps {
+                sh """
+                    docker rmi $imagename:$BUILD_NUMBER
+                    docker rmi $imagename:latest
+                """
+            } 
+        }
     }
 
-    stage("test"){
-        echo "implement me"
+    post {
+        always {
+            // archive the html files and publish them under reports
+            archiveArtifacts artifacts: 'build/html/*.*'
+            publishHTML (
+                target : [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'build/html',
+                    reportFiles: 'index.html',
+                    reportName: 'reports',
+                    reportTitles: 'Coverage Report'
+                ]
+            )
+        }
     }
-
-    stage("release"){
-        echo "implement me"
-    }
-
 }

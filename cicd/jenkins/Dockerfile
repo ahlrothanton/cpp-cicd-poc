@@ -10,7 +10,7 @@ RUN add-apt-repository \
    stable"
 
 RUN apt-get update  -qq \
-    && apt-get -y install docker-ce
+    && apt-get -y install build-essential docker-ce docker-ce-cli lcov cmake
 RUN usermod -aG docker jenkins
 
 USER jenkins

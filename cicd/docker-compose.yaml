@@ -1,5 +1,5 @@
 services:
-  jenkins:
+  jenkins_controller:
     build:
       context: ./jenkins
       dockerfile: Dockerfile
@@ -12,3 +12,5 @@ services:
     environment:
       JAVA_OPTS: -Djenkins.install.runSetupWizard=false
       JENKINS_OPTS: --argumentsRealm.roles.user=admin --argumentsRealm.passwd.admin=admin --argumentsRealm.roles.admin=admin
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

@@ -6,6 +6,8 @@ Basically builds the application, runs unit tests and creates a docker image whe
 
 Project is managed with cmake and tests are implemented with gtest.
 
+Project contains a docker setup to test the whole pipeline with Jenkins.
+
 ---
 
 ## Dependencies
@@ -58,3 +60,8 @@ Project is managed with cmake and tests are implemented with gtest.
     # specify debug/release flags for CMake during build time
     docker build -t cpp-cicd-poc --build-arg CMAKE_BUILD_TYPE=Debug .
     docker build -t cpp-cicd-poc --build-arg CMAKE_BUILD_TYPE=Release .
+
+- test out the Jenkins pipeline
+
+    cd cicd
+    docker-compose up

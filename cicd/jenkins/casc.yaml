@@ -1,14 +1,23 @@
+
 unclassified:
   location:
     url: http://localhost:8080/
 
 jobs:
   - script: |
-      multibranchPipelineJob('seed-job') {
-          branchSources {
+      pipelineJob('cpp-cicd-poc') {
+        def repo = 'https://github.com/ahlrothanton/cpp-cicd-poc.git'
+        description("C++ CICD PoC Jenkins job.")
+        definition {
+          cpsScm {
+            scm {
               git {
-                  id = 'cpp-cicd-poc'
-                  remote('https://github.com/ahlrothanton/cpp-cicd-poc.git')
+                remote { url(repo) }
+                branches('main')
+                scriptPath('cicd/jenkins/Jenkinsfile')
+                extensions { }
               }
+            }
           }
+        }
       }
