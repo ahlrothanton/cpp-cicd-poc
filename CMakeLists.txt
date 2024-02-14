@@ -33,7 +33,6 @@ target_link_libraries(
     print_time_test
     GTest::gtest_main
 )
-
 include(GoogleTest)
 gtest_discover_tests(print_time_test)
 
