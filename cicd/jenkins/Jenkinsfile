@@ -18,13 +18,11 @@ pipeline {
         }
 
         stage("changelog") {
-            when { changeRequest target: 'master' }
+            //when { changeRequest target: 'main' }
             steps {
                 sh """
                     git log --pretty='- %s' > changelog.txt
                 """
-                archiveArtifacts artifacts: 'changelog.txt'
-
             }
         }
 
@@ -64,9 +62,13 @@ pipeline {
         stage("publish-image") {
             steps {
                 script {
-                    docker.withRegistry( "", 'dockerhub' ) {
-                       dockerImage.push("$BUILD_NUMBER")
-                        dockerImage.push("latest")
+                    try {
+                        docker.withRegistry( "", 'dockerhub' ) {
+                            dockerImage.push("$BUILD_NUMBER")
+                            dockerImage.push("latest")
+                        }
+                    } catch (Exception e) {
+                        echo 'Unable to push image to DockerHub - did you remember to create the "dockerhub" credential?\n\n    Exception occurred: ' + e.toString()
                     }
                 }
             }
@@ -75,10 +77,16 @@ pipeline {
         stage("cleanup") {
             // cleanup docker images
             steps {
-                sh """
-                    docker rmi $imagename:$BUILD_NUMBER
-                    docker rmi $imagename:latest
-                """
+                script {
+                    try {
+                        sh """
+                            docker rmi $imagename:$BUILD_NUMBER
+                            docker rmi $imagename:latest
+                        """
+                    } catch (Exception e) {
+                        echo 'Unable to cleanup container images - maybe deleted already?\n    ' + e.toString()
+                    }
+                }
             } 
         }
     }
@@ -86,6 +94,8 @@ pipeline {
     post {
         always {
             // archive the html files and publish them under reports
+            archiveArtifacts artifacts: 'build/coverage.final'
+            archiveArtifacts artifacts: 'changelog.txt'
             archiveArtifacts artifacts: 'build/html/*.*'
             publishHTML (
                 target : [
