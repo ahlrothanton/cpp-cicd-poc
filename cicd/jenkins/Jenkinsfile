@@ -17,6 +17,17 @@ pipeline {
             }
         }
 
+        stage("changelog") {
+            when { changeRequest target: 'master' }
+            steps {
+                sh """
+                    git log --pretty='- %s' > changelog.txt
+                """
+                archiveArtifacts artifacts: 'changelog.txt'
+
+            }
+        }
+
         stage("build"){
             steps {
                 sh """
