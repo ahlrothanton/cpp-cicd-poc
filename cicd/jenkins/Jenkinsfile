@@ -40,7 +40,7 @@ pipeline {
                 sh """
                     # test
                     cd build
-                    ctest .
+                    ctest --output-junit test-results.xml --progress .
                     
                     # coverage
                     lcov -c -d . -o coverage.info
@@ -87,6 +87,7 @@ pipeline {
             }
 
             // archive the html files and publish them under reports
+            junit skipMarkingBuildUnstable: true, testResults: 'build/test-results.xml'
             archiveArtifacts artifacts: 'build/coverage.final'
             archiveArtifacts artifacts: 'changelog.txt'
             archiveArtifacts artifacts: 'build/html/*.*'
